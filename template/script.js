@@ -11,6 +11,7 @@ class TextInverter {
         this.clearButton = document.getElementById('clearButton');
         this.copyButton = document.getElementById('copyButton');
         this.currentCount = document.getElementById('currentCount');
+        this.themeToggle = document.getElementById('themeToggle');
         
         this.init();
     }
@@ -19,6 +20,7 @@ class TextInverter {
      * Inicializa la aplicación y configura los event listeners
      */
     init() {
+        this.initializeTheme();
         this.setupEventListeners();
         this.updateCharCount();
         this.updateButtonStates();
@@ -36,6 +38,9 @@ class TextInverter {
 
         // Event listener para el botón de copiar
         this.copyButton.addEventListener('click', () => this.copyResult());
+
+        // Event listener para el toggle de tema
+        this.themeToggle.addEventListener('click', () => this.toggleTheme());
 
         // Event listeners para el textarea de entrada
         this.inputText.addEventListener('input', () => {
@@ -55,11 +60,73 @@ class TextInverter {
         this.resultText.addEventListener('input', () => {
             this.updateButtonStates();
         });
+
+        // Detectar cambios en las preferencias del sistema
+        if (window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addEventListener('change', () => {
+                if (!localStorage.getItem('theme-preference')) {
+                    this.applyTheme(mediaQuery.matches ? 'dark' : 'light');
+                }
+            });
+        }
     }
 
     /**
-     * Invierte el texto ingresado por el usuario
+     * Inicializa el tema basado en la preferencia guardada o del sistema
      */
+    initializeTheme() {
+        const savedTheme = localStorage.getItem('theme-preference');
+        const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        this.applyTheme(theme);
+    }
+
+    /**
+     * Cambia entre modo claro y oscuro
+     */
+    toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        this.applyTheme(newTheme);
+        localStorage.setItem('theme-preference', newTheme);
+        
+        this.showMessage(`Modo ${newTheme === 'dark' ? 'oscuro' : 'claro'} activado`, 'success');
+    }
+
+    /**
+     * Aplica el tema especificado
+     * @param {string} theme - 'light' o 'dark'
+     */
+    applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        
+        // Actualizar el aria-label del botón
+        const label = theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+        this.themeToggle.setAttribute('aria-label', label);
+        
+        // Actualizar el meta theme-color para dispositivos móviles
+        this.updateThemeColor(theme);
+    }
+
+    /**
+     * Actualiza el color del tema para la barra de estado en móviles
+     * @param {string} theme - 'light' o 'dark'
+     */
+    updateThemeColor(theme) {
+        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        
+        if (!metaThemeColor) {
+            metaThemeColor = document.createElement('meta');
+            metaThemeColor.name = 'theme-color';
+            document.head.appendChild(metaThemeColor);
+        }
+        
+        const color = theme === 'dark' ? '#1e293b' : '#ffffff';
+        metaThemeColor.content = color;
+    }
     invertText() {
         const text = this.inputText.value.trim();
         
@@ -168,7 +235,7 @@ class TextInverter {
     }
 
     /**
-     * Actualiza el contador de caracteres
+     * Invierte el texto ingresado por el usuario
      */
     updateCharCount() {
         const currentLength = this.inputText.value.length;
