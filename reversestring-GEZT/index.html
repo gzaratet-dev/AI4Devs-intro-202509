@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplicación web para invertir texto de forma sencilla">
+    <title>Inversor de Texto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <div class="header-content">
+                <div class="title-section">
+                    <h1>Inversor de Texto</h1>
+                    <p class="subtitle">Escribe un texto y obten su versión invertida</p>
+                </div>
+                <button id="themeToggle" type="button" class="theme-toggle" aria-label="Cambiar tema">
+                    <span class="theme-icon light-icon">☀️</span>
+                    <span class="theme-icon dark-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <section class="text-inverter">
+            <div class="input-group">
+                <label for="inputText" class="visually-hidden">Texto a invertir</label>
+                <textarea 
+                    id="inputText" 
+                    placeholder="Escribe aquí el texto que deseas invertir..."
+                    rows="4"
+                    maxlength="1000"
+                    aria-describedby="char-count"
+                ></textarea>
+                <div class="char-count" id="char-count">
+                    <span id="currentCount">0</span>/1000 caracteres
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="invertButton" type="button" class="btn-primary">
+                    <span class="btn-text">Invertir Texto</span>
+                </button>
+                <button id="clearButton" type="button" class="btn-secondary">
+                    Limpiar
+                </button>
+            </div>
+
+            <div class="result-group">
+                <label for="resultText">Texto invertido:</label>
+                <textarea 
+                    id="resultText" 
+                    readonly 
+                    placeholder="El resultado aparecerá aquí..."
+                    rows="4"
+                ></textarea>
+                <button id="copyButton" type="button" class="btn-copy" disabled>
+                    Copiar Resultado
+                </button>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 - Inversor de Texto</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
